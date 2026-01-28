@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,7 @@ public class KatilimciBilgileri {
     private String kullaniciEmail;
     private List<JTextField> adFields;
     private List<JTextField> soyadFields;
-    private List<Choice> uyrukChoices;
+    private List<JComboBox<String>> uyrukCombos;
     private List<JTextField> kimlikFields;
     private List<JTextField> dogumTarihiFields;
     private List<JTextField> telefonFields;
@@ -22,153 +21,154 @@ public class KatilimciBilgileri {
         this.secilenTarih = secilenTarih;
         this.kisiSayisi = kisiSayisi;
         this.kullaniciEmail = kullaniciEmail;
-        frame = new JFrame("Katılımcı Bilgileri");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(600, 400);
-        frame.getContentPane().setBackground(new Color(176, 196, 222));
-        frame.setLayout(new BorderLayout(10, 10));
 
-        JLabel title = new JLabel("Katılımcı Bilgileri", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(new Color(70, 130, 180));
-        frame.add(title, BorderLayout.NORTH);
+        frame = ModernTheme.createModernFrame("Katılımcı Bilgileri");
 
-        JPanel formPanel = new JPanel(); // katılımcı giriş formları için
-        formPanel.setBackground(new Color(176, 196, 222));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Gradient arka planlı ana panel
+        JPanel mainPanel = ModernTheme.createGradientPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        // Başlık
+        JLabel title = ModernTheme.createTitleLabel("📝 Katılımcı Bilgileri");
+        JLabel subtitle = ModernTheme.createSubtitleLabel(tur.getAd() + " - " + secilenTarih);
+
+        JPanel headerPanel = new JPanel();
+        headerPanel.setOpaque(false);
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headerPanel.add(title);
+        headerPanel.add(subtitle);
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
+
+        // Form paneli
+        JPanel formPanel = new JPanel();
+        formPanel.setOpaque(false);
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
-        adFields = new ArrayList<>(); // arraylistleri form alanları için oluşturdum
-        soyadFields = new ArrayList<>(); // Initialize soyadFields to prevent NullPointerException
-        uyrukChoices = new ArrayList<>();
+        adFields = new ArrayList<>();
+        soyadFields = new ArrayList<>();
+        uyrukCombos = new ArrayList<>();
         kimlikFields = new ArrayList<>();
         dogumTarihiFields = new ArrayList<>();
         telefonFields = new ArrayList<>();
 
         for (int i = 0; i < kisiSayisi; i++) {
-            JPanel katilimciPanel = new JPanel(); // her katılımcı için panel döngüsü
-            katilimciPanel.setBackground(new Color(176, 196, 222));
-            katilimciPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(70, 130, 180)),
-                "Katılımcı " + (i + 1),
-                javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
-                javax.swing.border.TitledBorder.DEFAULT_POSITION,
-                new Font("Segoe UI", Font.PLAIN, 14),
-                new Color(70, 130, 180)
-            ));
-            katilimciPanel.setLayout(new GridBagLayout());
+            JPanel katilimciCard = ModernTheme.createCardPanel();
+            katilimciCard.setLayout(new GridBagLayout());
+            katilimciCard.setMaximumSize(new Dimension(700, 250));
+
             GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(5, 5, 5, 5);
+            gbc.insets = new Insets(8, 10, 8, 10);
             gbc.fill = GridBagConstraints.HORIZONTAL;
 
-            JLabel adLabel = new JLabel("Ad:");
-            adLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-            adLabel.setForeground(Color.BLACK);
-            JTextField adField = new JTextField(15);
-            adField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-            JLabel soyadLabel = new JLabel("Soyad:");
-            soyadLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-            soyadLabel.setForeground(Color.BLACK);
-            JTextField soyadField = new JTextField(15);
-            soyadField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-            JLabel uyrukLabel = new JLabel("Uyruk:");
-            uyrukLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-            uyrukLabel.setForeground(Color.BLACK);
-            Choice uyrukChoice = new Choice();
-            uyrukChoice.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            uyrukChoice.add("Türk");
-            uyrukChoice.add("Yabancı");
-
-            JLabel kimlikLabel = new JLabel("Kimlik No:");
-            kimlikLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-            kimlikLabel.setForeground(Color.BLACK);
-            JTextField kimlikField = new JTextField(15);
-            kimlikField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-            JLabel dogumTarihiLabel = new JLabel("Doğum Tarihi:");
-            dogumTarihiLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-            dogumTarihiLabel.setForeground(Color.BLACK);
-            JTextField dogumTarihiField = new JTextField(15);
-            dogumTarihiField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-            dogumTarihiField.setToolTipText("Gün.Ay.Yıl");
-
-            JLabel telefonLabel = new JLabel("Telefon:");
-            telefonLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-            telefonLabel.setForeground(Color.BLACK);
-            JTextField telefonField = new JTextField(15);
-            telefonField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-
-            // panel ızgara ayarları
+            // Başlık
+            JLabel katilimciBaslik = new JLabel("👤 Katılımcı " + (i + 1));
+            katilimciBaslik.setFont(new Font("Segoe UI", Font.BOLD, 16));
+            katilimciBaslik.setForeground(new Color(0, 120, 180));
             gbc.gridx = 0;
             gbc.gridy = 0;
-            gbc.weightx = 0.2;
-            katilimciPanel.add(adLabel, gbc);
-            gbc.gridx = 1;
-            gbc.weightx = 0.8;
-            katilimciPanel.add(adField, gbc);
+            gbc.gridwidth = 4;
+            katilimciCard.add(katilimciBaslik, gbc);
 
+            // Form alanları
+            gbc.gridwidth = 1;
+
+            // Satır 1: Ad, Soyad
             gbc.gridx = 0;
             gbc.gridy = 1;
-            gbc.weightx = 0.2;
-            katilimciPanel.add(soyadLabel, gbc);
+            gbc.weightx = 0.15;
+            katilimciCard.add(ModernTheme.createFormLabel("Ad:"), gbc);
+            JTextField adField = ModernTheme.createModernTextField();
             gbc.gridx = 1;
-            gbc.weightx = 0.8;
-            katilimciPanel.add(soyadField, gbc);
+            gbc.weightx = 0.35;
+            katilimciCard.add(adField, gbc);
 
+            gbc.gridx = 2;
+            gbc.weightx = 0.15;
+            katilimciCard.add(ModernTheme.createFormLabel("Soyad:"), gbc);
+            JTextField soyadField = ModernTheme.createModernTextField();
+            gbc.gridx = 3;
+            gbc.weightx = 0.35;
+            katilimciCard.add(soyadField, gbc);
+
+            // Satır 2: Uyruk, Kimlik
             gbc.gridx = 0;
             gbc.gridy = 2;
-            gbc.weightx = 0.2;
-            katilimciPanel.add(uyrukLabel, gbc);
+            gbc.weightx = 0.15;
+            katilimciCard.add(ModernTheme.createFormLabel("Uyruk:"), gbc);
+            JComboBox<String> uyrukCombo = new JComboBox<>(new String[] { "Türk", "Yabancı" });
+            uyrukCombo.setFont(new Font("Segoe UI", Font.PLAIN, 14));
             gbc.gridx = 1;
-            gbc.weightx = 0.8;
-            katilimciPanel.add(uyrukChoice, gbc);
+            gbc.weightx = 0.35;
+            katilimciCard.add(uyrukCombo, gbc);
 
+            gbc.gridx = 2;
+            gbc.weightx = 0.15;
+            katilimciCard.add(ModernTheme.createFormLabel("Kimlik No:"), gbc);
+            JTextField kimlikField = ModernTheme.createModernTextField();
+            gbc.gridx = 3;
+            gbc.weightx = 0.35;
+            katilimciCard.add(kimlikField, gbc);
+
+            // Satır 3: Doğum Tarihi, Telefon
             gbc.gridx = 0;
             gbc.gridy = 3;
-            gbc.weightx = 0.2;
-            katilimciPanel.add(kimlikLabel, gbc);
+            gbc.weightx = 0.15;
+            katilimciCard.add(ModernTheme.createFormLabel("Doğum Tarihi:"), gbc);
+            JTextField dogumField = ModernTheme.createModernTextField();
+            dogumField.setToolTipText("Gün.Ay.Yıl");
             gbc.gridx = 1;
-            gbc.weightx = 0.8;
-            katilimciPanel.add(kimlikField, gbc);
+            gbc.weightx = 0.35;
+            katilimciCard.add(dogumField, gbc);
 
-            gbc.gridx = 0;
-            gbc.gridy = 4;
-            gbc.weightx = 0.2;
-            katilimciPanel.add(dogumTarihiLabel, gbc);
-            gbc.gridx = 1;
-            gbc.weightx = 0.8;
-            katilimciPanel.add(dogumTarihiField, gbc);
+            gbc.gridx = 2;
+            gbc.weightx = 0.15;
+            katilimciCard.add(ModernTheme.createFormLabel("Telefon:"), gbc);
+            JTextField telefonField = ModernTheme.createModernTextField();
+            gbc.gridx = 3;
+            gbc.weightx = 0.35;
+            katilimciCard.add(telefonField, gbc);
 
-            gbc.gridx = 0;
-            gbc.gridy = 5;
-            gbc.weightx = 0.2;
-            katilimciPanel.add(telefonLabel, gbc);
-            gbc.gridx = 1;
-            gbc.weightx = 0.8;
-            katilimciPanel.add(telefonField, gbc);
-
-            formPanel.add(katilimciPanel);
-            formPanel.add(Box.createVerticalStrut(10)); //katılımcı panelleri arası 10 piksel dikey boşluk
+            formPanel.add(katilimciCard);
+            formPanel.add(Box.createVerticalStrut(15));
 
             adFields.add(adField);
             soyadFields.add(soyadField);
-            uyrukChoices.add(uyrukChoice);
+            uyrukCombos.add(uyrukCombo);
             kimlikFields.add(kimlikField);
-            dogumTarihiFields.add(dogumTarihiField);
+            dogumTarihiFields.add(dogumField);
             telefonFields.add(telefonField);
-        }    // giriş alanları, listelerine eklenir
+        }
 
-        JButton devamButton = createStyledButton("Devam Et");
-        frame.add(new JScrollPane(formPanel), BorderLayout.CENTER);
-        frame.add(devamButton, BorderLayout.SOUTH);
+        // ScrollPane
+        JScrollPane scrollPane = new JScrollPane(formPanel);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
+        // Butonlar
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
+        buttonPanel.setOpaque(false);
+
+        JButton devamButton = ModernTheme.createModernButton("Devam Et →");
+        JButton geriButton = ModernTheme.createSecondaryButton("Geri");
+
+        buttonPanel.add(geriButton);
+        buttonPanel.add(devamButton);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        frame.setContentPane(mainPanel);
+
+        // Aksiyonlar
         devamButton.addActionListener(e -> {
             for (int i = 0; i < kisiSayisi; i++) {
                 String ad = adFields.get(i).getText().trim();
                 String soyad = soyadFields.get(i).getText().trim();
-                String uyruk = uyrukChoices.get(i).getSelectedItem();
+                String uyruk = (String) uyrukCombos.get(i).getSelectedItem();
                 String kimlik = kimlikFields.get(i).getText().trim();
                 String dogumTarihi = dogumTarihiFields.get(i).getText().trim();
                 String telefon = telefonFields.get(i).getText().trim();
@@ -179,17 +179,20 @@ public class KatilimciBilgileri {
                 }
 
                 if (uyruk.equals("Türk") && !kimlik.matches("\\d{11}")) {
-                    JOptionPane.showMessageDialog(frame, "TC Kimlik No 11 haneli olmalı!", "Hata", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "TC Kimlik No 11 haneli olmalı!", "Hata",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 if (!dogumTarihi.matches("\\d{1,2}\\.\\d{1,2}\\.\\d{4}")) {
-                    JOptionPane.showMessageDialog(frame, "Doğum tarihi Gün.Ay.Yıl formatında olmalı!", "Hata", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Doğum tarihi Gün.Ay.Yıl formatında olmalı!", "Hata",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 if (!telefon.matches("\\d{11}")) {
-                    JOptionPane.showMessageDialog(frame, "Telefon numarası 11 haneli olmalı!", "Hata", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frame, "Telefon numarası 11 haneli olmalı!", "Hata",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
@@ -197,14 +200,15 @@ public class KatilimciBilgileri {
             String[] katilimciBilgileri = new String[kisiSayisi];
             for (int i = 0; i < kisiSayisi; i++) {
                 katilimciBilgileri[i] = adFields.get(i).getText().trim() + ";" +
-                                        soyadFields.get(i).getText().trim() + ";" +
-                                        uyrukChoices.get(i).getSelectedItem() + ";" +
-                                        kimlikFields.get(i).getText().trim() + ";" +
-                                        dogumTarihiFields.get(i).getText().trim() + ";" +
-                                        telefonFields.get(i).getText().trim();
-            }  // katılımcı bilgilerini dosyada ; ile ayırdım
+                        soyadFields.get(i).getText().trim() + ";" +
+                        uyrukCombos.get(i).getSelectedItem() + ";" +
+                        kimlikFields.get(i).getText().trim() + ";" +
+                        dogumTarihiFields.get(i).getText().trim() + ";" +
+                        telefonFields.get(i).getText().trim();
+            }
 
-            if (KatilimciKayit.katilimciKaydet(kullaniciEmail, tur.getAd(), secilenTarih, kisiSayisi, katilimciBilgileri)) {
+            if (KatilimciKayit.katilimciKaydet(kullaniciEmail, tur.getAd(), secilenTarih, kisiSayisi,
+                    katilimciBilgileri)) {
                 frame.dispose();
                 new Odeme(tur, secilenTarih, kisiSayisi, kullaniciEmail);
             } else {
@@ -212,49 +216,12 @@ public class KatilimciBilgileri {
             }
         });
 
+        geriButton.addActionListener(e -> {
+            frame.dispose();
+            new KisiSayisiSecim(tur, secilenTarih, kullaniciEmail);
+        });
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        button.setBackground(new Color(135, 206, 235));
-        button.setForeground(Color.WHITE);
-        button.setBorder(new RoundedBorder(10));
-        button.setFocusPainted(false);
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(100, 149, 237));
-            }
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(135, 206, 235));
-            }
-        });
-        return button;
-    }
-
-    static class RoundedBorder implements javax.swing.border.Border {
-        private final int radius;
-
-        RoundedBorder(int radius) {
-            this.radius = radius;
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(radius + 1, radius + 1, radius + 2, radius);
-        }
-
-        @Override
-        public boolean isBorderOpaque() {
-            return false;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            g.setColor(new Color(70, 130, 180));
-            g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-        }
     }
 }

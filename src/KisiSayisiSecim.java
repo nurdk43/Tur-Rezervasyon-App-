@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class KisiSayisiSecim {
     private JFrame frame;
@@ -12,89 +11,88 @@ public class KisiSayisiSecim {
         this.tur = tur;
         this.secilenTarih = secilenTarih;
         this.kullaniciEmail = kullaniciEmail;
-        frame = new JFrame("Kişi Sayısı Seçimi");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 200);
-        frame.getContentPane().setBackground(new Color(176, 196, 222));
-        frame.setLayout(new BorderLayout(10, 10));
 
-        JLabel title = new JLabel("Kişi Sayısı Seçimi", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.BLACK);
+        frame = ModernTheme.createModernFrame("Kişi Sayısı Seçimi");
 
-        frame.add(title, BorderLayout.NORTH);
+        // Gradient arka planlı ana panel
+        JPanel mainPanel = ModernTheme.createGradientPanel();
+        mainPanel.setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel(); // kişi sayısı seçim bileşenlerini tutan yeni panel
-        panel.setBackground(new Color(176, 196, 222));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        panel.setLayout(new FlowLayout());
+        // Başlık
+        JLabel title = ModernTheme.createTitleLabel("👥 Kişi Sayısı Seçimi");
+        mainPanel.add(title, BorderLayout.NORTH);
 
-        JLabel label = new JLabel("Kişi Sayısı (Max 8):");
-        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        label.setForeground(Color.BLACK);
+        // Form kartı
+        JPanel cardPanel = ModernTheme.createCardPanel();
+        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+        cardPanel.setPreferredSize(new Dimension(450, 300));
 
-        Choice kisiSayisiChoice = new Choice();
-        kisiSayisiChoice.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        // Tur ve tarih bilgisi
+        JLabel turLabel = new JLabel("🏷️ " + tur.getAd());
+        turLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        turLabel.setForeground(new Color(0, 120, 180));
+        turLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel tarihLabel = new JLabel("📅 " + secilenTarih);
+        tarihLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        tarihLabel.setForeground(ModernTheme.TEXT_DARK);
+        tarihLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Kişi sayısı seçici
+        JLabel sayiLabel = new JLabel("Kaç kişi katılacak? (Max 8)");
+        sayiLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        sayiLabel.setForeground(ModernTheme.TEXT_DARK);
+        sayiLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JComboBox<Integer> kisiSayisiCombo = new JComboBox<>();
+        kisiSayisiCombo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         for (int i = 1; i <= 8; i++) {
-            kisiSayisiChoice.add(String.valueOf(i));
+            kisiSayisiCombo.addItem(i);
         }
+        kisiSayisiCombo.setMaximumSize(new Dimension(150, 45));
+        kisiSayisiCombo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        panel.add(label);
-        panel.add(kisiSayisiChoice);
+        // Butonlar
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        buttonPanel.setOpaque(false);
 
-        JButton devamButton = createStyledButton("Devam Et");
-        frame.add(panel, BorderLayout.CENTER);
-        frame.add(devamButton, BorderLayout.SOUTH);
+        JButton devamButton = ModernTheme.createModernButton("Devam Et →");
+        JButton geriButton = ModernTheme.createSecondaryButton("Geri");
 
+        buttonPanel.add(geriButton);
+        buttonPanel.add(devamButton);
+
+        // Elementleri ekle
+        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(turLabel);
+        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(tarihLabel);
+        cardPanel.add(Box.createVerticalStrut(40));
+        cardPanel.add(sayiLabel);
+        cardPanel.add(Box.createVerticalStrut(15));
+        cardPanel.add(kisiSayisiCombo);
+        cardPanel.add(Box.createVerticalStrut(40));
+        cardPanel.add(buttonPanel);
+
+        // Ortalama
+        JPanel centerWrapper = ModernTheme.createCenteredContentPanel(cardPanel, 500);
+        mainPanel.add(centerWrapper, BorderLayout.CENTER);
+
+        frame.setContentPane(mainPanel);
+
+        // Aksiyonlar
         devamButton.addActionListener(e -> {
-            int kisiSayisi = Integer.parseInt(kisiSayisiChoice.getSelectedItem()); // kullanıcının seçtiği sayı alınıp tamsayıya çevrilir
+            int kisiSayisi = (Integer) kisiSayisiCombo.getSelectedItem();
             frame.dispose();
             new KatilimciBilgileri(tur, secilenTarih, kisiSayisi, kullaniciEmail);
         });
 
+        geriButton.addActionListener(e -> {
+            frame.dispose();
+            new TarihSecim(tur, kullaniciEmail);
+        });
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        button.setBackground(new Color(135, 206, 235));
-        button.setForeground(Color.WHITE);
-        button.setBorder(new RoundedBorder(10));
-        button.setFocusPainted(false);
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(100, 149, 237));
-            }
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(135, 206, 235));
-            }
-        });
-        return button;
-    }
-
-    static class RoundedBorder implements javax.swing.border.Border {
-        private final int radius;
-
-        RoundedBorder(int radius) {
-            this.radius = radius;
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(radius + 1, radius + 1, radius + 2, radius);
-        }
-
-        @Override
-        public boolean isBorderOpaque() {
-            return false;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            g.setColor(new Color(70, 130, 180));
-            g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-        }
     }
 }

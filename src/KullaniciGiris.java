@@ -1,50 +1,82 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class KullaniciGiris {
     private JFrame frame;
 
     public KullaniciGiris() {
-        frame = new JFrame("Giriş Yap");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 200);
-        frame.getContentPane().setBackground(new Color(176, 196, 222));
-        frame.setLayout(new BorderLayout(10, 10));
+        frame = ModernTheme.createModernFrame("Giriş Yap");
 
-        JLabel title = new JLabel("Giriş Yap", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.BLACK);
-        frame.add(title, BorderLayout.NORTH);
+        // Gradient arka planlı ana panel
+        JPanel mainPanel = ModernTheme.createGradientPanel();
+        mainPanel.setLayout(new BorderLayout());
 
-        JPanel formPanel = new JPanel();
-        formPanel.setBackground(new Color(176, 196, 222));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        formPanel.setLayout(new GridLayout(2, 2, 10, 10));
+        // Başlık
+        JLabel title = ModernTheme.createTitleLabel("Giriş Yap");
+        mainPanel.add(title, BorderLayout.NORTH);
 
-        JLabel emailLabel = new JLabel("E-posta:");
-        emailLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        emailLabel.setForeground(Color.BLACK);
-        JTextField emailField = new JTextField();
-        emailField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        // Form kartı
+        JPanel cardPanel = ModernTheme.createCardPanel();
+        cardPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(15, 20, 15, 20);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel sifreLabel = new JLabel("Şifre:");
-        sifreLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        sifreLabel.setForeground(Color.BLACK);
-        JPasswordField sifreField = new JPasswordField();
-        sifreField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        // Hoşgeldiniz mesajı
+        JLabel welcomeLabel = new JLabel("Hesabınıza giriş yapın", SwingConstants.CENTER);
+        welcomeLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        welcomeLabel.setForeground(new Color(100, 100, 100));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        cardPanel.add(welcomeLabel, gbc);
 
-        formPanel.add(emailLabel);
-        formPanel.add(emailField);
-        formPanel.add(sifreLabel);
-        formPanel.add(sifreField);
+        // Form alanları
+        JLabel emailLabel = ModernTheme.createFormLabel("E-posta:");
+        JTextField emailField = ModernTheme.createModernTextField();
 
-        JButton girisButton = createStyledButton("Giriş Yap");
-        frame.add(formPanel, BorderLayout.CENTER);
-        frame.add(girisButton, BorderLayout.SOUTH);
+        JLabel sifreLabel = ModernTheme.createFormLabel("Şifre:");
+        JPasswordField sifreField = ModernTheme.createModernPasswordField();
 
+        gbc.gridwidth = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0.3;
+        cardPanel.add(emailLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        cardPanel.add(emailField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 0.3;
+        cardPanel.add(sifreLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        cardPanel.add(sifreField, gbc);
+
+        // Butonlar
+        JButton girisButton = ModernTheme.createModernButton("Giriş Yap");
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(30, 20, 10, 20);
+        cardPanel.add(girisButton, gbc);
+
+        JButton geriButton = ModernTheme.createSecondaryButton("Geri");
+        gbc.gridy = 4;
+        gbc.insets = new Insets(10, 20, 15, 20);
+        cardPanel.add(geriButton, gbc);
+
+        // Ortalama
+        JPanel centerWrapper = ModernTheme.createCenteredContentPanel(cardPanel, 450);
+        mainPanel.add(centerWrapper, BorderLayout.CENTER);
+
+        frame.setContentPane(mainPanel);
+
+        // Aksiyonlar
         girisButton.addActionListener(e -> {
-            String email = emailField.getText().trim(); // mail ve şifre alınırken trim() ile boşlukları temizler
+            String email = emailField.getText().trim();
             String sifre = new String(sifreField.getPassword()).trim();
 
             if (email.isEmpty() || sifre.isEmpty()) {
@@ -61,49 +93,12 @@ public class KullaniciGiris {
             }
         });
 
+        geriButton.addActionListener(e -> {
+            frame.dispose();
+            new Giris();
+        });
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    private JButton createStyledButton(String text) { // metin içeren özelleştirilmiş buton
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        button.setBackground(new Color(135, 206, 235));
-        button.setForeground(Color.WHITE);
-        button.setBorder(new RoundedBorder(10));
-        button.setFocusPainted(false);
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(100, 149, 237));
-            }
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(135, 206, 235));
-            }
-        });
-        return button;
-    }
-
-    static class RoundedBorder implements javax.swing.border.Border {
-        private final int radius;
-
-        RoundedBorder(int radius) {
-            this.radius = radius;
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(radius + 1, radius + 1, radius + 2, radius);
-        }
-
-        @Override
-        public boolean isBorderOpaque() {
-            return false;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            g.setColor(new Color(70, 130, 180));
-            g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-        }
     }
 }

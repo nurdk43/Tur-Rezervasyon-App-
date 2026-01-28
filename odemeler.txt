@@ -38,3 +38,4 @@ busra@gmail.com,Diğer Akdeniz Turu,1234567809123456,11/31,890
 emre@gmail.com,Günübirlik Ankara Anıtkabir Turu,1234567890123456,11/31,789
 emre@gmail.com,Günübirlik Çanakkale Şehitlik Turu,1234567890123456,11/31,980
 emre@gmail.com,Yurt Dışı Mısır Turu,1234567890123456,11/31,890
+aysenurdk43@gmail.com,Yurt Dışı Balkanlar Turu,1234567890123456,01/33,123

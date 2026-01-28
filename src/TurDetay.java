@@ -1,84 +1,102 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class TurDetay {
     private JFrame frame;
     private TurBilgisi tur;
     private String kullaniciEmail;
-    private Image backgroundImage;
 
     public TurDetay(TurBilgisi tur, String kullaniciEmail) {
         this.tur = tur;
         this.kullaniciEmail = kullaniciEmail;
 
-        backgroundImage = new ImageIcon(getClass().getResource("/resimler/background2.png")).getImage();
+        frame = ModernTheme.createModernFrame("Tur Detayları");
 
-        frame = new JFrame("Tur Detayları");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(500, 400);
+        // Gradient arka planlı ana panel
+        JPanel mainPanel = ModernTheme.createGradientPanel();
+        mainPanel.setLayout(new BorderLayout());
 
-        JPanel backgroundPanel = new JPanel() {
-            @Override // override edilerek arka plan resmi çizilir
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                if (backgroundImage != null) {
-                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this); // resim panelin boyutlarına göre ölçeklendirilyo
-                }
-            }
-        };
-        backgroundPanel.setLayout(new BorderLayout(10, 10));
-        frame.setContentPane(backgroundPanel);
+        // Başlık
+        JLabel title = ModernTheme.createTitleLabel("📍 " + tur.getAd());
+        mainPanel.add(title, BorderLayout.NORTH);
 
-        JLabel title = new JLabel("Tur Detayları", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.BLACK);
-        backgroundPanel.add(title, BorderLayout.NORTH);
+        // Detay kartı
+        JPanel cardPanel = ModernTheme.createCardPanel();
+        cardPanel.setLayout(new BorderLayout(20, 20));
+        cardPanel.setPreferredSize(new Dimension(700, 400));
 
-        JTextArea detayArea = new JTextArea();
-        detayArea.setText("Tur Adı: " + tur.getAd() + "\n" + 
-                          "Fiyat: " + tur.getFiyat() + " " + (tur instanceof YurtIciTur ? "TL" : "Euro") + "\n" +
-                          "Süre: " + tur.getSure() + " Gün\n" +
-                          "İçerik:\n" + tur.getIcerik());
-        detayArea.setEditable(false); // Kullanıcı metni düzenleyemez
-        detayArea.setLineWrap(true); // metin satır sonlarında otomatik olarak kırılır 
-        detayArea.setWrapStyleWord(true); // kelimeler bölünmez
-        detayArea.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        detayArea.setForeground(Color.BLACK);
-        detayArea.setOpaque(false); // arka plan şeffaf yapılır (background görülsün diye)
+        // Tur bilgileri paneli
+        JPanel infoPanel = new JPanel();
+        infoPanel.setOpaque(false);
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
 
-        JScrollPane scrollPane = new JScrollPane(detayArea);
+        String paraBirimi = tur instanceof YurtIciTur ? "TL" : "Euro";
+
+        JLabel fiyatLabel = new JLabel("💰 Fiyat: " + tur.getFiyat() + " " + paraBirimi);
+        fiyatLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        fiyatLabel.setForeground(new Color(0, 120, 180));
+
+        JLabel sureLabel = new JLabel("📅 Süre: " + tur.getSure() + " Gün");
+        sureLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        sureLabel.setForeground(ModernTheme.TEXT_DARK);
+
+        JLabel icerikBaslik = new JLabel("📋 Tur İçeriği:");
+        icerikBaslik.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        icerikBaslik.setForeground(ModernTheme.TEXT_DARK);
+
+        JTextArea icerikArea = new JTextArea(tur.getIcerik());
+        icerikArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        icerikArea.setEditable(false);
+        icerikArea.setLineWrap(true);
+        icerikArea.setWrapStyleWord(true);
+        icerikArea.setOpaque(false);
+        icerikArea.setForeground(new Color(60, 60, 60));
+
+        JScrollPane scrollPane = new JScrollPane(icerikArea);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
-        backgroundPanel.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setBorder(BorderFactory.createLineBorder(ModernTheme.INPUT_BORDER));
+        scrollPane.setPreferredSize(new Dimension(600, 200));
 
-        JButton devamButton = createStyledButton("Devam Et");
-        backgroundPanel.add(devamButton, BorderLayout.SOUTH);
+        infoPanel.add(fiyatLabel);
+        infoPanel.add(Box.createVerticalStrut(10));
+        infoPanel.add(sureLabel);
+        infoPanel.add(Box.createVerticalStrut(20));
+        infoPanel.add(icerikBaslik);
+        infoPanel.add(Box.createVerticalStrut(10));
+        infoPanel.add(scrollPane);
 
+        cardPanel.add(infoPanel, BorderLayout.CENTER);
+
+        // Butonlar
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        buttonPanel.setOpaque(false);
+
+        JButton devamButton = ModernTheme.createModernButton("Devam Et →");
+        JButton geriButton = ModernTheme.createSecondaryButton("Geri");
+
+        buttonPanel.add(geriButton);
+        buttonPanel.add(devamButton);
+        cardPanel.add(buttonPanel, BorderLayout.SOUTH);
+
+        // Ortalama
+        JPanel centerWrapper = ModernTheme.createCenteredContentPanel(cardPanel, 750);
+        mainPanel.add(centerWrapper, BorderLayout.CENTER);
+
+        frame.setContentPane(mainPanel);
+
+        // Aksiyonlar
         devamButton.addActionListener(e -> {
             frame.dispose();
             new TarihSecim(tur, kullaniciEmail);
         });
 
+        geriButton.addActionListener(e -> {
+            frame.dispose();
+            new TatilSecenekleri(kullaniciEmail);
+        });
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        button.setBackground(new Color(135, 206, 235));
-        button.setForeground(Color.WHITE);
-        button.setBorder(new RoundedBorder(10));
-        button.setFocusPainted(false);
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(100, 149, 237));
-            }
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(135, 206, 235));
-            }
-        });
-        return button;
     }
 }

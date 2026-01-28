@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 
 public class GorusOneri {
@@ -15,31 +14,71 @@ public class GorusOneri {
         this.secilenTarih = secilenTarih;
         this.kisiSayisi = kisiSayisi;
         this.kullaniciEmail = kullaniciEmail;
-        frame = new JFrame("Görüş ve Öneri");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 300);
-        frame.getContentPane().setBackground(new Color(176, 196, 222));
-        frame.setLayout(new BorderLayout(10, 10));
 
-        JLabel title = new JLabel("Görüş ve Öneri", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.BLACK); 
-        frame.add(title, BorderLayout.NORTH);
+        frame = ModernTheme.createModernFrame("Görüş ve Öneri");
 
-        JTextArea gorusArea = new JTextArea();
-        gorusArea.setLineWrap(true); // Metin otomatik olarak satır sonlarında kırılır
-        gorusArea.setWrapStyleWord(true); // Kelimeler boşluklardan bölünür
-        gorusArea.setFont(new Font("Segoe UI", Font.BOLD, 14)); 
-        gorusArea.setBackground(new Color(176, 196, 222));
-        gorusArea.setForeground(Color.BLACK); 
-        frame.add(new JScrollPane(gorusArea), BorderLayout.CENTER);
+        // Gradient arka planlı ana panel
+        JPanel mainPanel = ModernTheme.createGradientPanel();
+        mainPanel.setLayout(new BorderLayout());
 
-        JButton gonderButton = createStyledButton("Gönder");
-        frame.add(gonderButton, BorderLayout.SOUTH);
+        // Başlık
+        JLabel title = ModernTheme.createTitleLabel("💬 Görüş ve Öneri");
+        JLabel subtitle = ModernTheme.createSubtitleLabel("Fikirleriniz bizim için değerli!");
 
+        JPanel headerPanel = new JPanel();
+        headerPanel.setOpaque(false);
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headerPanel.add(title);
+        headerPanel.add(subtitle);
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
+
+        // Form kartı
+        JPanel cardPanel = ModernTheme.createCardPanel();
+        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+        cardPanel.setPreferredSize(new Dimension(600, 350));
+
+        JLabel gorusLabel = new JLabel("Görüşlerinizi paylaşın (opsiyonel):");
+        gorusLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        gorusLabel.setForeground(ModernTheme.TEXT_DARK);
+        gorusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JTextArea gorusArea = ModernTheme.createModernTextArea();
+        gorusArea.setRows(8);
+        JScrollPane scrollPane = new JScrollPane(gorusArea);
+        scrollPane.setBorder(BorderFactory.createLineBorder(ModernTheme.INPUT_BORDER));
+        scrollPane.setMaximumSize(new Dimension(500, 200));
+        scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Butonlar
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        buttonPanel.setOpaque(false);
+
+        JButton gonderButton = ModernTheme.createModernButton("Gönder →");
+        JButton atlayButton = ModernTheme.createSecondaryButton("Atla");
+
+        buttonPanel.add(atlayButton);
+        buttonPanel.add(gonderButton);
+
+        // Elementleri ekle
+        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(gorusLabel);
+        cardPanel.add(Box.createVerticalStrut(15));
+        cardPanel.add(scrollPane);
+        cardPanel.add(Box.createVerticalStrut(30));
+        cardPanel.add(buttonPanel);
+
+        // Ortalama
+        JPanel centerWrapper = ModernTheme.createCenteredContentPanel(cardPanel, 650);
+        mainPanel.add(centerWrapper, BorderLayout.CENTER);
+
+        frame.setContentPane(mainPanel);
+
+        // Aksiyonlar
         gonderButton.addActionListener(e -> {
-            String gorus = gorusArea.getText().trim(); // görüş alınır ve boşluklar temizlenir
-            if (!gorus.isEmpty()) { 
+            String gorus = gorusArea.getText().trim();
+            if (!gorus.isEmpty()) {
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter("gorusler.txt", true))) {
                     writer.write(kullaniciEmail + ": " + gorus);
                     writer.newLine();
@@ -51,49 +90,12 @@ public class GorusOneri {
             new Tesekkur(tur, secilenTarih, kisiSayisi, kullaniciEmail);
         });
 
+        atlayButton.addActionListener(e -> {
+            frame.dispose();
+            new Tesekkur(tur, secilenTarih, kisiSayisi, kullaniciEmail);
+        });
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14)); // Kalın yazı
-        button.setBackground(new Color(135, 206, 235));
-        button.setForeground(Color.BLACK); // Siyah yazı
-        button.setBorder(new RoundedBorder(10));
-        button.setFocusPainted(false);
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(100, 149, 237));
-            }
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(135, 206, 235));
-            }
-        });
-        return button;
-    }
-
-    static class RoundedBorder implements javax.swing.border.Border {
-        private final int radius;
-
-        RoundedBorder(int radius) {
-            this.radius = radius;
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(radius + 1, radius + 1, radius + 2, radius);
-        }
-
-        @Override
-        public boolean isBorderOpaque() {
-            return false;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            g.setColor(new Color(70, 130, 180));
-            g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-        }
     }
 }

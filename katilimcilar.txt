@@ -40,3 +40,4 @@ emre@gmail.com,Yurt Dışı Mısır Turu,30 Mayıs 2025,1,emre;efe;Türk;1234567
 emre@gmail.com,Diğer Karadeniz Turu,30 Mayıs 2025,1,emre;efe;Türk;12345678901;11.11.2000;09875671234
 emre@gmail.com,Günübirlik Çanakkale Şehitlik Turu,28 Mayıs 2025,1,emre;efe;Türk;12345678901;11.11.2000;09871234567
 emre@gmail.com,Yurt Dışı Mısır Turu,30 Mayıs 2025,1,emre;sjsj;Türk;12345678901;11.11.2000;09871234567
+aysenurdk43@gmail.com,Yurt Dışı Balkanlar Turu,8 Mayıs 2026,2,Ayşenur;Dik;Türk;12345678912;23.11.2000;05123456789,Burak;Öztürk;Türk;98765432108;19.03.2000;05432167895

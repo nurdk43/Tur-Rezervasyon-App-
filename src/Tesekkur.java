@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class Tesekkur {
     private JFrame frame;
@@ -14,49 +13,78 @@ public class Tesekkur {
         this.secilenTarih = secilenTarih;
         this.kisiSayisi = kisiSayisi;
         this.kullaniciEmail = kullaniciEmail;
-        frame = new JFrame("Teşekkür");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 200);
-        frame.getContentPane().setBackground(new Color(176, 196, 222));
-        frame.setLayout(new BorderLayout(10, 10));
 
-        JLabel title = new JLabel("Teşekkür", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.BLACK);
-        frame.add(title, BorderLayout.NORTH);
+        frame = ModernTheme.createModernFrame("Teşekkürler");
 
-        JLabel mesaj = new JLabel("Bizi tercih ettiğiniz için teşekkür ederiz!", SwingConstants.CENTER);
-        mesaj.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        mesaj.setForeground(Color.BLACK);
-        frame.add(mesaj, BorderLayout.CENTER);
+        // Gradient arka planlı ana panel
+        JPanel mainPanel = ModernTheme.createGradientPanel();
+        mainPanel.setLayout(new BorderLayout());
 
-        JButton hesabimButton = createStyledButton("Hesabım");
-        frame.add(hesabimButton, BorderLayout.SOUTH);
+        // İçerik kartı
+        JPanel cardPanel = ModernTheme.createCardPanel();
+        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+        cardPanel.setPreferredSize(new Dimension(500, 350));
 
+        // Teşekkür ikonu
+        JLabel thankIcon = new JLabel("🙏", SwingConstants.CENTER);
+        thankIcon.setFont(new Font("Segoe UI", Font.PLAIN, 100));
+        thankIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Teşekkür mesajı
+        JLabel mesaj1 = new JLabel("Teşekkür Ederiz!", SwingConstants.CENTER);
+        mesaj1.setFont(new Font("Segoe UI", Font.BOLD, 32));
+        mesaj1.setForeground(new Color(0, 120, 180));
+        mesaj1.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel mesaj2 = new JLabel("Bizi tercih ettiğiniz için teşekkür ederiz.", SwingConstants.CENTER);
+        mesaj2.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        mesaj2.setForeground(ModernTheme.TEXT_DARK);
+        mesaj2.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel mesaj3 = new JLabel("İyi tatiller dileriz! ✈️", SwingConstants.CENTER);
+        mesaj3.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        mesaj3.setForeground(new Color(100, 100, 100));
+        mesaj3.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Butonlar
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        buttonPanel.setOpaque(false);
+
+        JButton hesabimButton = ModernTheme.createModernButton("👤 Hesabım");
+        JButton cikisButton = ModernTheme.createSecondaryButton("Çıkış");
+
+        buttonPanel.add(cikisButton);
+        buttonPanel.add(hesabimButton);
+
+        // Elementleri ekle
+        cardPanel.add(Box.createVerticalStrut(30));
+        cardPanel.add(thankIcon);
+        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(mesaj1);
+        cardPanel.add(Box.createVerticalStrut(15));
+        cardPanel.add(mesaj2);
+        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(mesaj3);
+        cardPanel.add(Box.createVerticalStrut(40));
+        cardPanel.add(buttonPanel);
+
+        // Ortalama
+        JPanel centerWrapper = ModernTheme.createCenteredContentPanel(cardPanel, 550);
+        mainPanel.add(centerWrapper, BorderLayout.CENTER);
+
+        frame.setContentPane(mainPanel);
+
+        // Aksiyonlar
         hesabimButton.addActionListener(e -> {
             frame.dispose();
             new Hesabim(kullaniciEmail);
         });
 
+        cikisButton.addActionListener(e -> {
+            System.exit(0);
+        });
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        button.setBackground(new Color(135, 206, 235));
-        button.setForeground(Color.BLACK);
-        button.setBorder(new RoundedBorder(10));
-        button.setFocusPainted(false);
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(100, 149, 237));
-            }
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(135, 206, 235));
-            }
-        });
-        return button;
     }
 }

@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,24 +10,38 @@ public class Hesabim {
 
     public Hesabim(String kullaniciEmail) {
         this.kullaniciEmail = kullaniciEmail;
-        frame = new JFrame("Hesabım");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(600, 400);
-        frame.getContentPane().setBackground(new Color(176, 196, 222));
-        frame.setLayout(new BorderLayout(10, 10));
+        frame = ModernTheme.createModernFrame("Hesabım");
 
-        JLabel title = new JLabel("Hesabım", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.BLACK);
-        frame.add(title, BorderLayout.NORTH);
+        // Gradient arka planlı ana panel
+        JPanel mainPanel = ModernTheme.createGradientPanel();
+        mainPanel.setLayout(new BorderLayout());
 
+        // Başlık
+        JLabel title = ModernTheme.createTitleLabel("👤 Hesabım");
+        JLabel subtitle = ModernTheme.createSubtitleLabel(kullaniciEmail);
+
+        JPanel headerPanel = new JPanel();
+        headerPanel.setOpaque(false);
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headerPanel.add(title);
+        headerPanel.add(subtitle);
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
+
+        // İçerik kartı
+        JPanel cardPanel = ModernTheme.createCardPanel();
+        cardPanel.setLayout(new BorderLayout(15, 15));
+
+        // Tur detayları
         JTextArea detayArea = new JTextArea();
-        detayArea.setEditable(false); // Kullanıcının tur kayıtlarını gösterir, düzenlenemez
-        detayArea.setLineWrap(true); // Metin satır sonlarında kırılır.
-        detayArea.setWrapStyleWord(true); // Kelimeler boşluklardan kırılır.
-        detayArea.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        detayArea.setBackground(new Color(176, 196, 222));
-        detayArea.setForeground(Color.BLACK);
+        detayArea.setEditable(false);
+        detayArea.setLineWrap(true);
+        detayArea.setWrapStyleWord(true);
+        detayArea.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        detayArea.setBackground(new Color(250, 252, 255));
+        detayArea.setForeground(ModernTheme.TEXT_DARK);
+        detayArea.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         try {
             BufferedReader reader = new BufferedReader(new FileReader("katilimcilar.txt"));
@@ -50,7 +63,7 @@ public class Hesabim {
                 try {
                     kisiSayisi = Integer.parseInt(parts[3]);
                 } catch (NumberFormatException e) {
-                    detayArea.append("Hata: Geçersiz kişi sayısı formatı: " + parts[3] + "\n");
+                    detayArea.append("⚠️ Hata: Geçersiz kişi sayısı formatı: " + parts[3] + "\n");
                     continue;
                 }
 
@@ -59,123 +72,92 @@ public class Hesabim {
                 for (int i = 4; i < parts.length; i++) {
                     String[] katilimci = parts[i].split(";");
                     katilimciSayisi++;
-                    String ad = katilimci.length > 0 ? katilimci[0] : "Bilinmiyor"; // indeksin değeri yoksa Bilinmiyor atanır.
+                    String ad = katilimci.length > 0 ? katilimci[0] : "Bilinmiyor";
                     String soyad = katilimci.length > 1 ? katilimci[1] : "Bilinmiyor";
                     String uyruk = katilimci.length > 2 ? katilimci[2] : "Bilinmiyor";
                     String kimlik = katilimci.length > 3 ? katilimci[3] : "Bilinmiyor";
                     String dogum = katilimci.length > 4 ? katilimci[4] : "Bilinmiyor";
                     String telefon = katilimci.length > 5 ? katilimci[5] : "Bilinmiyor";
 
-                    katilimcilar.append("Katılımcı ").append(katilimciSayisi).append(":\n")
-                                .append("  Ad: ").append(ad).append("\n")
-                                .append("  Soyad: ").append(soyad).append("\n")
-                                .append("  Uyruk: ").append(uyruk).append("\n")
-                                .append("  Kimlik No: ").append(kimlik).append("\n")
-                                .append("  Doğum Tarihi: ").append(dogum).append("\n")
-                                .append("  Telefon: ").append(telefon).append("\n\n");
-                    // StringBuilder a her katılımcının bilgilerini ekledim
+                    katilimcilar.append("   👤 Katılımcı ").append(katilimciSayisi).append(":\n")
+                            .append("      • Ad: ").append(ad).append("\n")
+                            .append("      • Soyad: ").append(soyad).append("\n")
+                            .append("      • Uyruk: ").append(uyruk).append("\n")
+                            .append("      • Kimlik No: ").append(kimlik).append("\n")
+                            .append("      • Doğum Tarihi: ").append(dogum).append("\n")
+                            .append("      • Telefon: ").append(telefon).append("\n\n");
                 }
 
                 if (katilimciSayisi != kisiSayisi) {
-                    detayArea.append("Uyarı: Kayıtlı katılımcı sayısı (" + katilimciSayisi + ") kişi sayısıyla (" + kisiSayisi + ") uyuşmuyor!\n");
+                    detayArea.append("⚠️ Uyarı: Kayıtlı katılımcı sayısı (" + katilimciSayisi + ") kişi sayısıyla ("
+                            + kisiSayisi + ") uyuşmuyor!\n");
                 }
 
                 Date turTarihi;
                 try {
                     turTarihi = sdf.parse(tarih);
                 } catch (Exception e) {
-                    detayArea.append("Hata: Geçersiz tarih formatı: " + tarih + "\n");
+                    detayArea.append("⚠️ Hata: Geçersiz tarih formatı: " + tarih + "\n");
                     continue;
                 }
-                String turDurumu = turTarihi.before(now) ? "Geçmiş" : "Gelecek"; // hesabım sayfasındaki tur durumu için
+                String turDurumu = turTarihi.before(now) ? "🔴 Geçmiş" : "🟢 Gelecek";
 
-                detayArea.append("Tur Adı: " + turAdi + "\n");
-                detayArea.append("Tarih: " + tarih + "\n");
-                detayArea.append("Durum: " + turDurumu + "\n");
-                detayArea.append("Kişi Sayısı: " + kisiSayisi + "\n");
-                detayArea.append("Katılımcılar:\n" + katilimcilar.toString());
-                detayArea.append("------------------------\n\n");
+                detayArea.append("═══════════════════════════════════════\n");
+                detayArea.append("🏷️ Tur Adı: " + turAdi + "\n");
+                detayArea.append("📅 Tarih: " + tarih + "\n");
+                detayArea.append("📍 Durum: " + turDurumu + "\n");
+                detayArea.append("👥 Kişi Sayısı: " + kisiSayisi + "\n\n");
+                detayArea.append("📋 Katılımcılar:\n" + katilimcilar.toString());
             }
             reader.close();
 
             if (!hasTours) {
-                detayArea.append("Henüz kayıtlı turunuz bulunmamaktadır.");
+                detayArea.append("ℹ️ Henüz kayıtlı turunuz bulunmamaktadır.\n\n");
+                detayArea.append("Yeni bir tur rezervasyonu yapmak için 'Tur Seçenekleri' butonuna tıklayın.");
             }
         } catch (FileNotFoundException ex) {
-            detayArea.append("Hata: katilimcilar.txt dosyası bulunamadı!");
+            detayArea.append("⚠️ Hata: katilimcilar.txt dosyası bulunamadı!");
         } catch (IOException ex) {
-            detayArea.append("Hata: Dosya okuma hatası: " + ex.getMessage());
+            detayArea.append("⚠️ Hata: Dosya okuma hatası: " + ex.getMessage());
         } catch (Exception ex) {
-            detayArea.append("Hata: Beklenmeyen hata: " + ex.getMessage());
+            detayArea.append("⚠️ Hata: Beklenmeyen hata: " + ex.getMessage());
         }
 
-        frame.add(new JScrollPane(detayArea), BorderLayout.CENTER);
+        JScrollPane scrollPane = new JScrollPane(detayArea);
+        scrollPane.setBorder(BorderFactory.createLineBorder(ModernTheme.INPUT_BORDER));
+        cardPanel.add(scrollPane, BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(176, 196, 222));
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        // Ortalama
+        JPanel centerWrapper = new JPanel(new BorderLayout());
+        centerWrapper.setOpaque(false);
+        centerWrapper.setBorder(BorderFactory.createEmptyBorder(20, 80, 20, 80));
+        centerWrapper.add(cardPanel, BorderLayout.CENTER);
+        mainPanel.add(centerWrapper, BorderLayout.CENTER);
 
-        JButton geriButton = createStyledButton("Geri");
-        JButton okButton = createStyledButton("OK");
+        // Butonlar
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 15));
+        buttonPanel.setOpaque(false);
+
+        JButton geriButton = ModernTheme.createSecondaryButton("Tur Seçenekleri");
+        JButton cikisButton = ModernTheme.createModernButton("Çıkış");
 
         buttonPanel.add(geriButton);
-        buttonPanel.add(okButton);
+        buttonPanel.add(cikisButton);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-        frame.add(buttonPanel, BorderLayout.SOUTH);
+        frame.setContentPane(mainPanel);
 
+        // Aksiyonlar
         geriButton.addActionListener(e -> {
             frame.dispose();
             new TatilSecenekleri(kullaniciEmail);
         });
 
-        okButton.addActionListener(e -> {
+        cikisButton.addActionListener(e -> {
             System.exit(0);
         });
 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14)); // Kalın yazı
-        button.setBackground(new Color(135, 206, 235));
-        button.setForeground(Color.BLACK); // Siyah yazı
-        button.setBorder(new RoundedBorder(10));
-        button.setFocusPainted(false);
-        button.setPreferredSize(new Dimension(120, 40));
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(100, 149, 237));
-            }
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(135, 206, 235));
-            }
-        });
-        return button;
-    }
-
-    static class RoundedBorder implements javax.swing.border.Border {
-        private final int radius;
-
-        RoundedBorder(int radius) {
-            this.radius = radius;
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(radius + 1, radius + 1, radius + 2, radius);
-        }
-
-        @Override
-        public boolean isBorderOpaque() {
-            return false;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            g.setColor(new Color(70, 130, 180));
-            g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-        }
     }
 }

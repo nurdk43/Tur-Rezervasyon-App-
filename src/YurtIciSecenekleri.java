@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class YurtIciSecenekleri {
     private JFrame frame;
@@ -8,30 +7,64 @@ public class YurtIciSecenekleri {
 
     public YurtIciSecenekleri(String kullaniciEmail) {
         this.kullaniciEmail = kullaniciEmail;
-        frame = new JFrame("Yurt İçi Turlar");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 200);
-        frame.getContentPane().setBackground(new Color(176, 196, 222));
-        frame.setLayout(new BorderLayout(10, 10));
+        frame = ModernTheme.createModernFrame("Yurt İçi Turlar");
 
-        JLabel title = new JLabel("Yurt İçi Turlar", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.BLACK);
-        frame.add(title, BorderLayout.NORTH);
+        // Gradient arka planlı ana panel
+        JPanel mainPanel = ModernTheme.createGradientPanel();
+        mainPanel.setLayout(new BorderLayout());
 
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setBackground(new Color(176, 196, 222));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        buttonPanel.setLayout(new GridLayout(2, 1, 10, 10));
+        // Başlık
+        JLabel title = ModernTheme.createTitleLabel("🏔️ Yurt İçi Turlar");
+        JLabel subtitle = ModernTheme.createSubtitleLabel("İstanbul çıkışlı turlarımız");
 
-        JButton gunubirlikButton = createStyledButton("İstanbul Çıkışlı Günübirlik Turlar");
-        JButton digerButton = createStyledButton("İstanbul Çıkışlı Diğer Turlar");
+        JPanel headerPanel = new JPanel();
+        headerPanel.setOpaque(false);
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+        headerPanel.add(title);
+        headerPanel.add(subtitle);
+        mainPanel.add(headerPanel, BorderLayout.NORTH);
 
-        buttonPanel.add(gunubirlikButton);
-        buttonPanel.add(digerButton);
+        // İçerik paneli
+        JPanel contentPanel = new JPanel();
+        contentPanel.setOpaque(false);
+        contentPanel.setLayout(new GridBagLayout());
 
-        frame.add(buttonPanel, BorderLayout.CENTER);
+        JPanel cardPanel = ModernTheme.createCardPanel();
+        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+        cardPanel.setPreferredSize(new Dimension(450, 280));
 
+        JButton gunubirlikButton = ModernTheme.createModernButton("🌅  Günübirlik Turlar");
+        JButton digerButton = ModernTheme.createModernButton("🗺️  Diğer Turlar");
+        JButton geriButton = ModernTheme.createSecondaryButton("Geri");
+
+        gunubirlikButton.setPreferredSize(new Dimension(350, 60));
+        digerButton.setPreferredSize(new Dimension(350, 60));
+        geriButton.setPreferredSize(new Dimension(200, 45));
+
+        gunubirlikButton.setMaximumSize(new Dimension(350, 60));
+        digerButton.setMaximumSize(new Dimension(350, 60));
+        geriButton.setMaximumSize(new Dimension(200, 45));
+
+        gunubirlikButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        digerButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        geriButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        cardPanel.add(Box.createVerticalStrut(30));
+        cardPanel.add(gunubirlikButton);
+        cardPanel.add(Box.createVerticalStrut(25));
+        cardPanel.add(digerButton);
+        cardPanel.add(Box.createVerticalStrut(35));
+        cardPanel.add(geriButton);
+        cardPanel.add(Box.createVerticalStrut(30));
+
+        contentPanel.add(cardPanel);
+        mainPanel.add(contentPanel, BorderLayout.CENTER);
+
+        frame.setContentPane(mainPanel);
+
+        // Aksiyonlar
         gunubirlikButton.addActionListener(e -> {
             frame.dispose();
             new GunubirlikTurSecim(kullaniciEmail);
@@ -42,25 +75,12 @@ public class YurtIciSecenekleri {
             new DigerTurSecim(kullaniciEmail);
         });
 
+        geriButton.addActionListener(e -> {
+            frame.dispose();
+            new TatilSecenekleri(kullaniciEmail);
+        });
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        button.setBackground(new Color(135, 206, 235));
-        button.setForeground(Color.BLACK);
-        button.setBorder(new RoundedBorder(10));
-        button.setFocusPainted(false);
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(100, 149, 237));
-            }
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(135, 206, 235));
-            }
-        });
-        return button;
     }
 }

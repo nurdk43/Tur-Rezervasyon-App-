@@ -1,107 +1,125 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 public class Giris {
-    private static final Color BG_COLOR = new Color(176, 196, 222);
-    private static final Color BUTTON_BG = new Color(135, 206, 235);
-    private static final Color BUTTON_HOVER = new Color(100, 149, 237);
-    private static final Color BORDER_COLOR = new Color(70, 130, 180);
     private final JFrame frame;
 
     public Giris() {
-        // Pencere
-        frame = new JFrame("gezGO Tur");
+        // Modern tam ekran pencere
+        frame = ModernTheme.createModernFrame("gezGO Tur");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(420, 450);
-        frame.getContentPane().setBackground(BG_COLOR); // Pencerenin arka plan rengini sabit açık mavi olarak ayarladık
-        frame.setLayout(new BorderLayout(10, 10));
 
-        // Logo
+        // Gradient arka planlı ana panel
+        JPanel mainPanel = ModernTheme.createGradientPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        // İçerik paneli - ortalanmış
+        JPanel contentPanel = new JPanel();
+        contentPanel.setOpaque(false);
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+        contentPanel.setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+
+        // Logo paneli
         JPanel logoPanel = new JPanel();
-        logoPanel.setBackground(BG_COLOR);
-        ImageIcon logoIcon = new ImageIcon(getClass().getResource("/resimler/Adsız_tasarım__1_-removebg-preview.png"));
-        JLabel logoLabel = new JLabel(new ImageIcon(logoIcon.getImage().getScaledInstance(120, 120, Image.SCALE_SMOOTH)));
-        logoPanel.add(logoLabel);
-        frame.add(logoPanel, BorderLayout.NORTH);
+        logoPanel.setOpaque(false);
+        logoPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        try {
+            ImageIcon logoIcon = new ImageIcon(
+                    getClass().getResource("/resimler/Adsız_tasarım__1_-removebg-preview.png"));
+            JLabel logoLabel = new JLabel(
+                    new ImageIcon(logoIcon.getImage().getScaledInstance(180, 180, Image.SCALE_SMOOTH)));
+            logoPanel.add(logoLabel);
+        } catch (Exception e) {
+            JLabel placeholderLogo = new JLabel("gezGO");
+            placeholderLogo.setFont(new Font("Segoe UI", Font.BOLD, 60));
+            placeholderLogo.setForeground(ModernTheme.TEXT_LIGHT);
+            logoPanel.add(placeholderLogo);
+        }
 
-        // Karşılama mesajı
+        // Başlık
         JLabel hosGeldiniz = new JLabel("gezGO Tur'a Hoş Geldiniz", SwingConstants.CENTER);
-        hosGeldiniz.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        hosGeldiniz.setForeground(Color.BLACK);
-        frame.add(hosGeldiniz, BorderLayout.CENTER);
+        hosGeldiniz.setFont(new Font("Segoe UI", Font.BOLD, 36));
+        hosGeldiniz.setForeground(ModernTheme.TEXT_LIGHT);
+        hosGeldiniz.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        
-        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 10, 10));
-        buttonPanel.setBackground(BG_COLOR);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Alt başlık
+        JLabel altBaslik = new JLabel("Hayalinizdeki tatile bir adım uzaktasınız", SwingConstants.CENTER);
+        altBaslik.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        altBaslik.setForeground(new Color(200, 220, 255));
+        altBaslik.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton uyeOlButton = createStyledButton("Üye Ol");
-        JButton girisYapButton = createStyledButton("Giriş Yap");
-        JButton yoneticiButton = createStyledButton("Yönetici Girişi");
+        // Buton paneli
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setOpaque(false);
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 20));
+        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton uyeOlButton = ModernTheme.createModernButton("Üye Ol");
+        JButton girisYapButton = ModernTheme.createModernButton("Giriş Yap");
+        JButton yoneticiButton = ModernTheme.createSecondaryButton("Yönetici Girişi");
+
+        uyeOlButton.setPreferredSize(new Dimension(220, 55));
+        girisYapButton.setPreferredSize(new Dimension(220, 55));
+        yoneticiButton.setPreferredSize(new Dimension(200, 50));
 
         buttonPanel.add(uyeOlButton);
         buttonPanel.add(girisYapButton);
-        buttonPanel.add(yoneticiButton);
-        frame.add(buttonPanel, BorderLayout.SOUTH);
 
-       
-        uyeOlButton.addActionListener(e -> { frame.dispose(); new UyeOl(); });
-        girisYapButton.addActionListener(e -> { frame.dispose(); new KullaniciGiris(); });
-        yoneticiButton.addActionListener(e -> { frame.dispose(); new YoneticiGiris(); });
-        // ilgili sınıflardan yeni pencereler açar
+        // Yönetici butonu ayrı panel
+        JPanel adminPanel = new JPanel();
+        adminPanel.setOpaque(false);
+        adminPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        adminPanel.add(yoneticiButton);
 
-        
+        // İçerik ekleme
+        contentPanel.add(Box.createVerticalGlue());
+        contentPanel.add(logoPanel);
+        contentPanel.add(Box.createVerticalStrut(30));
+        contentPanel.add(hosGeldiniz);
+        contentPanel.add(Box.createVerticalStrut(10));
+        contentPanel.add(altBaslik);
+        contentPanel.add(Box.createVerticalStrut(50));
+        contentPanel.add(buttonPanel);
+        contentPanel.add(Box.createVerticalStrut(30));
+        contentPanel.add(adminPanel);
+        contentPanel.add(Box.createVerticalGlue());
+
+        // Ortalama wrapper
+        JPanel centerWrapper = new JPanel(new GridBagLayout());
+        centerWrapper.setOpaque(false);
+        centerWrapper.add(contentPanel);
+
+        mainPanel.add(centerWrapper, BorderLayout.CENTER);
+
+        // Alt bilgi
+        JLabel footer = new JLabel("© 2025 gezGO Tur - Tüm hakları saklıdır", SwingConstants.CENTER);
+        footer.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        footer.setForeground(new Color(180, 200, 230));
+        footer.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        mainPanel.add(footer, BorderLayout.SOUTH);
+
+        frame.setContentPane(mainPanel);
+
+        // Buton aksiyonları
+        uyeOlButton.addActionListener(e -> {
+            frame.dispose();
+            new UyeOl();
+        });
+        girisYapButton.addActionListener(e -> {
+            frame.dispose();
+            new KullaniciGiris();
+        });
+        yoneticiButton.addActionListener(e -> {
+            frame.dispose();
+            new YoneticiGiris();
+        });
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        button.setBackground(BUTTON_BG);
-        button.setForeground(Color.BLACK);
-        button.setBorder(new RoundedBorder(10));
-        button.setFocusPainted(false);
-        button.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(BUTTON_HOVER);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(BUTTON_BG);
-            }
-        });
-        return button;
-    }
-
-    static class RoundedBorder implements javax.swing.border.Border {
-        private final int radius;
-
-        RoundedBorder(int radius) {
-            this.radius = radius;
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(radius + 1, radius + 1, radius + 2, radius);
-        }
-
-        @Override
-        public boolean isBorderOpaque() {
-            return false;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            g.setColor(BORDER_COLOR);
-            g.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
-        }
-    }
-
     public static void main(String[] args) {
-        new Giris();
+        SwingUtilities.invokeLater(() -> new Giris());
     }
 }

@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class TatilOnay {
     private JFrame frame;
@@ -14,33 +13,67 @@ public class TatilOnay {
         this.secilenTarih = secilenTarih;
         this.kisiSayisi = kisiSayisi;
         this.kullaniciEmail = kullaniciEmail;
-        frame = new JFrame("Tatil Onayı");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 300);  
-        frame.getContentPane().setBackground(new Color(176, 196, 222));
-        frame.setLayout(new BorderLayout(10, 10));
 
-        JLabel title = new JLabel("Tatil Onayı", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.BLACK);
-        frame.add(title, BorderLayout.NORTH);
+        frame = ModernTheme.createModernFrame("Tatil Onayı");
 
-        JPanel centerPanel = new JPanel();
-        centerPanel.setBackground(new Color(176, 196, 222));
-        centerPanel.setLayout(new BorderLayout());
-        
-        // onay mesajı
-        JLabel mesaj = new JLabel("<html>Tatiliniz onaylandı!<br>En kısa sürede sizinle iletişime geçeceğiz.</html>", SwingConstants.CENTER);
-        mesaj.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        mesaj.setForeground(Color.BLACK);
-        mesaj.setHorizontalAlignment(SwingConstants.CENTER);
-        centerPanel.add(mesaj, BorderLayout.NORTH);
+        // Gradient arka planlı ana panel
+        JPanel mainPanel = ModernTheme.createGradientPanel();
+        mainPanel.setLayout(new BorderLayout());
 
-        frame.add(centerPanel, BorderLayout.CENTER); // merkez panel
+        // Başlık
+        JLabel title = ModernTheme.createTitleLabel("✅ Tatil Onayı");
+        mainPanel.add(title, BorderLayout.NORTH);
 
-        JButton devamButton = createStyledButton("Devam Et");
-        frame.add(devamButton, BorderLayout.SOUTH);
+        // Onay kartı
+        JPanel cardPanel = ModernTheme.createCardPanel();
+        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+        cardPanel.setPreferredSize(new Dimension(500, 300));
 
+        // Başarı ikonu
+        JLabel successIcon = new JLabel("🎉", SwingConstants.CENTER);
+        successIcon.setFont(new Font("Segoe UI", Font.PLAIN, 80));
+        successIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Onay mesajı
+        JLabel mesaj1 = new JLabel("Tatiliniz Onaylandı!", SwingConstants.CENTER);
+        mesaj1.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        mesaj1.setForeground(new Color(0, 150, 100));
+        mesaj1.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel mesaj2 = new JLabel("En kısa sürede sizinle iletişime geçeceğiz.", SwingConstants.CENTER);
+        mesaj2.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        mesaj2.setForeground(ModernTheme.TEXT_DARK);
+        mesaj2.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Tur bilgisi
+        JLabel turBilgi = new JLabel("🏷️ " + tur.getAd() + " - " + secilenTarih);
+        turBilgi.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        turBilgi.setForeground(new Color(100, 100, 100));
+        turBilgi.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Buton
+        JButton devamButton = ModernTheme.createModernButton("Devam Et →");
+        devamButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Elementleri ekle
+        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(successIcon);
+        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(mesaj1);
+        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(mesaj2);
+        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(turBilgi);
+        cardPanel.add(Box.createVerticalStrut(30));
+        cardPanel.add(devamButton);
+
+        // Ortalama
+        JPanel centerWrapper = ModernTheme.createCenteredContentPanel(cardPanel, 550);
+        mainPanel.add(centerWrapper, BorderLayout.CENTER);
+
+        frame.setContentPane(mainPanel);
+
+        // Aksiyonlar
         devamButton.addActionListener(e -> {
             frame.dispose();
             new GorusOneri(tur, secilenTarih, kisiSayisi, kullaniciEmail);
@@ -48,23 +81,5 @@ public class TatilOnay {
 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        button.setBackground(new Color(135, 206, 235));
-        button.setForeground(Color.WHITE);
-        button.setBorder(new RoundedBorder(10));
-        button.setFocusPainted(false);
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(100, 149, 237));
-            }
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(135, 206, 235));
-            }
-        });
-        return button;
     }
 }

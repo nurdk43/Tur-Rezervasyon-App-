@@ -1,65 +1,95 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class UyeOl {
     private JFrame frame;
 
     public UyeOl() {
-        frame = new JFrame("Üye Ol");
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(400, 400);
-        frame.getContentPane().setBackground(new Color(176, 196, 222));
-        frame.setLayout(new BorderLayout(10, 10));
+        frame = ModernTheme.createModernFrame("Üye Ol");
 
-        JLabel title = new JLabel("Üye Ol", SwingConstants.CENTER);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        title.setForeground(Color.BLACK);
-        frame.add(title, BorderLayout.NORTH);
+        // Gradient arka planlı ana panel
+        JPanel mainPanel = ModernTheme.createGradientPanel();
+        mainPanel.setLayout(new BorderLayout());
 
-        JPanel formPanel = new JPanel();
-        formPanel.setBackground(new Color(176, 196, 222));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        formPanel.setLayout(new GridLayout(5, 2, 10, 10));
+        // Başlık
+        JLabel title = ModernTheme.createTitleLabel("Üye Ol");
+        mainPanel.add(title, BorderLayout.NORTH);
 
-        JLabel adLabel = new JLabel("Ad:");
-        adLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        adLabel.setForeground(Color.BLACK);
-        JTextField adField = new JTextField();
-        adField.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        // Form kartı
+        JPanel cardPanel = ModernTheme.createCardPanel();
+        cardPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 15, 10, 15);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        JLabel soyadLabel = new JLabel("Soyad:");
-        soyadLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        soyadLabel.setForeground(Color.BLACK);
-        JTextField soyadField = new JTextField();
-        soyadField.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        // Form alanları
+        JLabel adLabel = ModernTheme.createFormLabel("Ad:");
+        JTextField adField = ModernTheme.createModernTextField();
 
-        JLabel emailLabel = new JLabel("E-posta:");
-        emailLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        emailLabel.setForeground(Color.BLACK);
-        JTextField emailField = new JTextField();
-        emailField.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        JLabel soyadLabel = ModernTheme.createFormLabel("Soyad:");
+        JTextField soyadField = ModernTheme.createModernTextField();
 
-        JLabel sifreLabel = new JLabel("Şifre:");
-        sifreLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        sifreLabel.setForeground(Color.BLACK);
+        JLabel emailLabel = ModernTheme.createFormLabel("E-posta:");
+        JTextField emailField = ModernTheme.createModernTextField();
+
+        JLabel sifreLabel = ModernTheme.createFormLabel("Şifre:");
         sifreLabel.setToolTipText("Min 8 karakter, 1 rakam, 1 özel karakter (!@#$%^&*+=?-)");
-        JPasswordField sifreField = new JPasswordField();
-        sifreField.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        JPasswordField sifreField = ModernTheme.createModernPasswordField();
 
-        formPanel.add(adLabel);
-        formPanel.add(adField);
-        formPanel.add(soyadLabel);
-        formPanel.add(soyadField);
-        formPanel.add(emailLabel);
-        formPanel.add(emailField);
-        formPanel.add(sifreLabel);
-        formPanel.add(sifreField);
+        // Grid yerleşimi
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.3;
+        cardPanel.add(adLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        cardPanel.add(adField, gbc);
 
-        JButton uyeOlButton = createStyledButton("Üye Ol");
-        frame.add(formPanel, BorderLayout.CENTER);
-        frame.add(uyeOlButton, BorderLayout.SOUTH);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0.3;
+        cardPanel.add(soyadLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        cardPanel.add(soyadField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 0.3;
+        cardPanel.add(emailLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        cardPanel.add(emailField, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.weightx = 0.3;
+        cardPanel.add(sifreLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 0.7;
+        cardPanel.add(sifreField, gbc);
+
+        // Buton
+        JButton uyeOlButton = ModernTheme.createModernButton("Üye Ol");
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.gridwidth = 2;
+        gbc.insets = new Insets(30, 15, 10, 15);
+        cardPanel.add(uyeOlButton, gbc);
+
+        // Geri butonu
+        JButton geriButton = ModernTheme.createSecondaryButton("Geri");
+        gbc.gridy = 5;
+        gbc.insets = new Insets(10, 15, 10, 15);
+        cardPanel.add(geriButton, gbc);
+
+        // Ortalama
+        JPanel centerWrapper = ModernTheme.createCenteredContentPanel(cardPanel, 500);
+        mainPanel.add(centerWrapper, BorderLayout.CENTER);
+
+        frame.setContentPane(mainPanel);
+
+        // Aksiyonlar
         uyeOlButton.addActionListener(e -> {
             String ad = adField.getText().trim();
             String soyad = soyadField.getText().trim();
@@ -71,7 +101,7 @@ public class UyeOl {
                 return;
             }
 
-            if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) { 
+            if (!email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
                 JOptionPane.showMessageDialog(frame, "Geçerli bir e-posta girin!", "Hata", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -100,25 +130,12 @@ public class UyeOl {
             }
         });
 
+        geriButton.addActionListener(e -> {
+            frame.dispose();
+            new Giris();
+        });
+
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-    }
-
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        button.setBackground(new Color(135, 206, 235));
-        button.setForeground(Color.BLACK);
-        button.setBorder(new RoundedBorder(10));
-        button.setFocusPainted(false);
-        button.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(100, 149, 237));
-            }
-            public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(135, 206, 235));
-            }
-        });
-        return button;
     }
 }
